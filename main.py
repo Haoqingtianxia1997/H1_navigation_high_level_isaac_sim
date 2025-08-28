@@ -15,11 +15,11 @@ LLM_JSON_FILE = "src/mistral_ai/scripts/llm_script.json"
 import json
 
 def stt_thread():
-    # 后台运行，ESC 退出时整个程序也会结束
+    # Running in background, press ESC to exit
     run_stt()
 
 if __name__ == "__main__":
-    # 清空 transcription.txt 内容
+    # Clear transcription.txt content
     with open(TRANS_FILE, "w", encoding="utf-8") as f:
         f.write("")
     with open(VLM_FILE, "w", encoding="utf-8") as f:
@@ -31,30 +31,30 @@ if __name__ == "__main__":
     with open(LLM_JSON_FILE, "w", encoding="utf-8") as f:
         f.write("")
 
-    # 1. 启动 STT 线程
+    # 1. Start STT thread
     threading.Thread(target=stt_thread, daemon=True).start()
 
     last_text = ""
     print("🟢 STT thread started. Waiting for new speech...")
 
     while True:
-        # 2. 等待新的录音完成
+        # 2. Wait for new recording to complete
         NEW_TEXT_EVENT.wait()
         NEW_TEXT_EVENT.clear()
-        # 3. 读取最新文本
+        # 3. Read latest text
         try:
             with open(TRANS_FILE, "r", encoding="utf-8") as f:
                 text = f.read().strip()
         except FileNotFoundError:
             continue
-        # 4. 若文本没变就忽略
+        # 4. If text hasn't changed, ignore
         if text == last_text:
             continue
         last_text = text
         run_mistral_llm()
         run_tts(LLM_FILE)
 
-        # 5. 读取 JSON 动作列表并执行
+        # 5. Read JSON action list and execute
         try:
             with open(LLM_JSON_FILE, "r", encoding="utf-8") as f:
                 llm_data = json.load(f)

@@ -18,15 +18,15 @@ def run_mistral_vlm(user_prompt: str, image_path) -> Tuple[bool, str]:
 
     # extract JSON objects from the response
     found, response, full_json = safe_extract_json_and_response_for_vlm(vision_resp)
-    # 保存 response 文本
+    # save response text
     print("🔍 found the target:", found)
     print("🗣️  response:", response)
     print("📦 complete JSON:\n", json.dumps(full_json, indent=2, ensure_ascii=False))
 
-    # 保存 txt
+    # save txt
     Path("./src/mistral_ai/scripts/vlm_script.txt").write_text(response, encoding="utf-8")
 
-    # 保存完整 JSON
+    # save complete JSON
     with open("./src/mistral_ai/scripts/vlm_script.json", "w", encoding="utf-8") as jf:
         json.dump(full_json, jf, ensure_ascii=False, indent=2)
 
@@ -37,7 +37,7 @@ def run_mistral_vlm(user_prompt: str, image_path) -> Tuple[bool, str]:
         run_tts(vlm_script)         
         return False, None, None
 
-    # 从 object 列表里取第 1 个 label
+    # Get the first label from the object list
     objects = full_json.get("object", [])
     first_name = objects[0].get("name", "") if objects else ""
     first_label = objects[0].get("label", "") if objects else ""

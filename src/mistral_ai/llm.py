@@ -18,17 +18,17 @@ def run_mistral_llm():
         assistant_prompt=assistant_prompt
     )
 
-    # 新的安全提取方式
+    # safely extract JSON and response
     response, json_blocks = safe_extract_json_and_response_for_llm(str(subtasks))
 
-    # 保存 response 文本
+    # Save response text
     Path("./src/mistral_ai/scripts/llm_script.txt").write_text(response, encoding="utf-8")
 
     print("🤖 LLM Response:")
     print(">>> Subtask list:\n", response)
     print(">>> JSON:\n", json.dumps(json_blocks[0], indent=2, ensure_ascii=False) if json_blocks else "None")
 
-    # 保存 JSON 动作结构
+    # Save JSON action structure
     if json_blocks:
         with open("./src/mistral_ai/scripts/llm_script.json", "w", encoding="utf-8") as jf:
             json.dump(json_blocks[0], jf, ensure_ascii=False, indent=2)

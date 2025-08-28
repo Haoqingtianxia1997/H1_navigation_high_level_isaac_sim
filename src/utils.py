@@ -41,32 +41,32 @@ def get_full_text(filepath):
 
 def safe_extract_json_and_response_for_llm(text: str) -> tuple[str, list[dict]]:
     """
-    提取完整 JSON（含 response 和 actions），返回 response 字符串和动作列表。
-    尽量从模型输出中提取第一个合法 JSON 块。
+    Extract complete JSON (include response and actions) and return response string and action list.
+    Try to extract the first valid JSON block from the model output.
     """
     try:
-        # 清理 markdown 包裹
+        # clear markdown wrapping
         text = re.sub(r"```json|```", "", text).strip()
 
-        # 尝试整体解析
+        # try parsing
         parsed = json.loads(text)
         response = parsed.get("response", "")
         actions = parsed.get("actions", [])
-        return response, [parsed]  # 保持 extract_json 接口兼容
+        return response, [parsed]  # keep extract_json interface compatible
     except Exception as e:
-        print(f"[safe_extract_json_and_response] JSON 解析失败: {e}")
+        print(f"[safe_extract_json_and_response] JSON parsing failed: {e}")
         return "", []
     
 
 def safe_extract_json_and_response_for_vlm(data: Any) -> Tuple[bool, str, Dict]:
     """
-    返回三个值:
+    Return 3 values`:
       1. found     : bool
       2. response  : str
-      3. full_json : dict  ←  完整 JSON
+      3. full_json : dict  ←  complete JSON
     """
     try:
-        # ── 1. 转成 dict ─────────────────────────────
+        # ── 1. convert to dict ─────────────────────────────
         if isinstance(data, dict):
             parsed = data
         else:
@@ -75,14 +75,14 @@ def safe_extract_json_and_response_for_vlm(data: Any) -> Tuple[bool, str, Dict]:
             text = re.sub(r"\bTrue\b",  "true",  text)
             parsed = json.loads(text)
 
-        # ── 2. 提取字段 ───────────────────────────────
+        # ── 2. extract fields ───────────────────────────────
         found = bool(parsed.get("if_find", False))
 
         raw_resp = parsed.get("response", "")
         response = " ".join(raw_resp) if isinstance(raw_resp, list) else str(raw_resp)
 
-        return found, response, parsed        # ← 直接返回完整 dict
+        return found, response, parsed        # ← directly return complete dict
 
     except Exception as e:
-        print(f"[safe_extract_json_and_response] JSON 解析失败: {e}")
+        print(f"[safe_extract_json_and_response] JSON parsing failed: {e}")
         return False, "", {}

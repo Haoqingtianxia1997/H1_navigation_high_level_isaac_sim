@@ -33,24 +33,18 @@ class Config:
     # Multilingual recognition optimization parameters
     LANGUAGE_PRIORITY = ["en"]  # Language priority: English
     VOCABULARY = []  # Optional: Add specific vocabulary to improve recognition accuracy
-    
-    # Language-specific optimization parameters
-    LANGUAGE_SPECIFIC_PARAMS = {
-        "de": {"temperature": 0.1},  # Optimization for German
-        "en": {"temperature": 0.1},  # Optimization for English
-        "zh": {"temperature": 0.0}   # Optimization for Chinese
-    }
+
 
 
 class LinuxKeyListener:
-    """Linux下替代keyboard库的按键监听器"""
+    """Keyboard listener for Linux"""
     def __init__(self):
         self.running = False
         self.s_pressed = False
         self.old_settings = None
         
     def setup_terminal(self):
-        if os.name == 'posix':  # Unix/Linux系统
+        if os.name == 'posix':  # Unix/Linux system
             self.old_settings = termios.tcgetattr(sys.stdin)
             tty.setraw(sys.stdin.fileno())
     
@@ -77,7 +71,7 @@ class LinuxKeyListener:
                             self.running = False
                             break
                     elif self.s_pressed:
-                        # 检查S键是否还在按下状态（简化处理）
+                        # Check if S key is still pressed (simplified)
                         pass
             except Exception as e:
                 print(f"Key listener error: {e}")
@@ -171,17 +165,17 @@ class VoiceTranscriber:
 
             result = self.model.transcribe(
                 audio_data,
-                language="en",                 # 强制英文
+                language="en",                 # Force English
                 task="transcribe",
                 fp16=fp16,
-                temperature=0.0,               # 首先用最确定的解码
-                condition_on_previous_text=False,  # 每段独立，避免上一段影响下一段变语言
+                temperature=0.0,               # Start with the most certain decoding
+                condition_on_previous_text=False,  # Each segment is independent to avoid previous segments affecting language change
                 initial_prompt=(
                     "This is an English dictation. Transcribe strictly in English. "
                     "Do not translate. Use standard English spelling."
                 ),
-                no_speech_threshold=0.4,       # 适度过滤静音触发
-                logprob_threshold=-1.0,        # 避免过度丢弃英文tokens
+                no_speech_threshold=0.4,       # Moderate filtering for silence triggers
+                logprob_threshold=-1.0,        # Avoid excessive discarding of English tokens
                 compression_ratio_threshold=2.4
             )
             
@@ -258,11 +252,11 @@ def run_stt(blocking: bool = True):
     ...
     transcriber = VoiceTranscriber()
 
-    # ---- 终端按键监听替代 keyboard ----
+    # ---- Terminal key listener instead of keyboard ----
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
 
-    tty.setraw(fd)             # ← 关键！改用 raw 而不是 cbreak
+    tty.setraw(fd)             # ← Key point! Use raw instead of cbreak
     HOLD_TIMEOUT = 0.8
     last_s_time = None
     recording = False
@@ -296,6 +290,6 @@ def run_stt(blocking: bool = True):
 if __name__ == "__main__":
     # run_stt()
     transcriber = VoiceTranscriber()
-    text = transcriber.auto_record_and_transcribe(5)  # 自动录音5秒
+    text = transcriber.auto_record_and_transcribe(5)  # auto record for 5 seconds
     print("Final result:", text)
     transcriber.cleanup()

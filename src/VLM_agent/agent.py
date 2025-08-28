@@ -12,17 +12,17 @@ def calibrate_points(points):
 
 def VLM_agent(user_prompt: str, image_path) -> tuple[bool, None | tuple[int, int]]:
     """
-    启动 VLM Agent，处理视觉任务。
+    Launch VLM agent to process visual tasks.
     """
     if user_prompt == "user person":
-        return True, (0, 0, 0)  # 返回一个默认的坐标点
+        return True, (0, 0, 0)  # Return a default coordinate point
     elif user_prompt == "home":
-        return True, (1, 1, 1)  # 返回一个默认的坐标点
+        return True, (1, 1, 1)  # Return a default coordinate point
     elif user_prompt == "spoon rest":
-        return True, (2, 2, 2) # 返回一个默认的坐标点
+        return True, (2, 2, 2)  # Return a default coordinate point
 
     print("🟢 Starting VLM Agent...")
-    if_find , target_label, target_text = run_mistral_vlm(user_prompt, image_path)  # 调用 VLM 模型处理视觉任务
+    if_find , target_label, target_text = run_mistral_vlm(user_prompt, image_path)  # Call VLM model to process visual tasks
     
     if not if_find:
         print("❌ No target found at the moment.")
@@ -38,4 +38,4 @@ def VLM_agent(user_prompt: str, image_path) -> tuple[bool, None | tuple[int, int
 
     print("✅ VLM Agent completed.")
 
-    return True, seg_center_point  # 返回检测到的目标框和中心点坐标
+    return True, seg_center_point  # Return detected target box and center point coordinates
