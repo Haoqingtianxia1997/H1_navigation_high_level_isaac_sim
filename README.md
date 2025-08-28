@@ -53,9 +53,12 @@
    export MISTRAL_API_KEY="your_mistral_api_key_here"
    ```
 
-   ## 🎯 Operation guide
-1. **Run the application**:
+5. **model directory**:
    ```bash
-   ./run.sh
+   src/VLM_agent/sam_hq/sam_vit_h_4b8939.pth: 
+   https://huggingface.co/HCMUE-Research/SAM-vit-h/blob/main/sam_vit_h_4b8939.pth
+
+   src/VLM_agent/FastSAM/FastSAM-x.pt:
+   https://github.com/ultralytics/assets/releases/download/v8.3.0/FastSAM-x.pt
    ```
-#TODO
+   ## 🎯 Operation guide
